@@ -1,71 +1,94 @@
 const curriculumData = {
   "Semester 1": [
-    "Calculus (I)", "Physics (I)", "Physics Laboratory (I)",
-    "Programming Language", "Chinese (I)", "English (I)", "Guarani"
+    { name: "Calculus (I)", valid: true },
+    { name: "Physics (I)", valid: true },
+    { name: "Physics Laboratory (I)", valid: true },
+    { name: "Programming Language", valid: true },
+    { name: "Chinese (I)", valid: false },
+    { name: "English (I)", valid: false },
+    { name: "Guarani", valid: false }
   ],
   "Semester 2": [
-    "Calculus (II)", "Physics (II)", "Physics Laboratory (II)",
-    "Linear Algebra", "Engineering Drawing", "Chinese (II)", "English (II)"
+    { name: "Calculus (II)", valid: true },
+    { name: "Physics (II)", valid: true },
+    { name: "Physics Laboratory (II)", valid: true },
+    { name: "Linear Algebra", valid: true },
+    { name: "Engineering Drawing", valid: true },
+    { name: "Chinese (II)", valid: false },
+    { name: "English (II)", valid: false }
   ],
   "Semester 3": [
-    "Ergonomics", "Introduction to Industrial Engineering", "Data Structures",
-    "Object-Oriented Programming", "Elective (1)", "Work Studies",
-    "Chinese (III)", "English (III)"
+    { name: "Ergonomics", valid: true },
+    { name: "Introduction to Industrial Engineering", valid: true },
+    { name: "Data Structures", valid: true },
+    { name: "Object-Oriented Programming", valid: true },
+    { name: "Elective (1)", valid: false },
+    { name: "Work Studies", valid: true },
+    { name: "Chinese (III)", valid: false },
+    { name: "English (III)", valid: false }
   ],
   "Semester 4": [
-    "Economic Engineering", "Probability Theory", "Production Planning and Control",
-    "Elective (2)", "Industrial Accounting", "Quality Control",
-    "Chinese (IV)", "English (IV)"
+    { name: "Economic Engineering", valid: true },
+    { name: "Probability Theory", valid: true },
+    { name: "Production Planning and Control", valid: true },
+    { name: "Elective (2)", valid: false },
+    { name: "Industrial Accounting", valid: true },
+    { name: "Quality Control", valid: true },
+    { name: "Chinese (IV)", valid: false },
+    { name: "English (IV)", valid: false }
   ],
   "Semester 5": [
-    "Information Management Systems", "E-commerce", "Engineering Statistics",
-    "Manufacturing Processes", "Operations Research (I)"
+    { name: "Information Management Systems", valid: true },
+    { name: "E-commerce", valid: true },
+    { name: "Engineering Statistics", valid: true },
+    { name: "Manufacturing Processes", valid: true },
+    { name: "Operations Research (I)", valid: true }
   ],
   "Semester 6 ✈️ Exchange Window": [
-    "Operations Research (II)", "Simulation", "Elective (3)",
-    "Supply Chains", "Professional Internship"
+    { name: "Operations Research (II)", valid: true },
+    { name: "Simulation", valid: true },
+    { name: "Elective (3)", valid: false },
+    { name: "Supply Chains", valid: true },
+    { name: "Professional Internship", valid: true }
   ],
   "Semester 7 ✈️ Exchange Window": [
-    "Elective (4)", "Elective (5)", "Data Mining Applications",
-    "Inventory Theory", "Systems Analysis", "Final Project in Industrial Engineering (I)"
+    { name: "Elective (4)", valid: false },
+    { name: "Elective (5)", valid: false },
+    { name: "Data Mining Applications", valid: true },
+    { name: "Inventory Theory", valid: true },
+    { name: "Systems Analysis", valid: true },
+    { name: "Final Project in Industrial Engineering (I)", valid: true }
   ],
   "Semester 8": [
-    "Elective (6)", "Big Data Analytics", "Final Project in Industrial Engineering (II)"
+    { name: "Elective (6)", valid: false },
+    { name: "Big Data Analytics", valid: true },
+    { name: "Final Project in Industrial Engineering (II)", valid: true }
   ]
 };
 
 let completedCount = 0;
-const completedSubjects = new Set();
 
 function updateExchangeStatus() {
-  const countSpan = document.getElementById("completed-count");
-  const exchangeText = document.getElementById("exchange-status");
-  countSpan.textContent = completedCount;
-
+  document.getElementById("completed-count").textContent = completedCount;
+  const status = document.getElementById("exchange-status");
   if (completedCount >= 13) {
-    exchangeText.innerHTML = "✈️ Exchange Eligibility: <strong style='color: green;'>Eligible</strong>";
+    status.innerHTML = "✈️ Exchange Eligibility: <strong style='color: green;'>Eligible</strong>";
   } else {
-    exchangeText.innerHTML = "✈️ Exchange Eligibility: <strong style='color: red;'>Not eligible</strong>";
+    status.innerHTML = "✈️ Exchange Eligibility: <strong style='color: red;'>Not eligible</strong>";
   }
 }
 
-function toggleSubject(element) {
-  const subjectName = element.textContent;
-  if (element.classList.contains("completed")) {
-    element.classList.remove("completed");
-    completedSubjects.delete(subjectName);
-    completedCount--;
-  } else {
-    element.classList.add("completed");
-    completedSubjects.add(subjectName);
-    completedCount++;
-  }
+function toggleSubject(element, valid) {
+  if (!valid) return;
+
+  const isCompleted = element.classList.toggle("completed");
+  completedCount += isCompleted ? 1 : -1;
   updateExchangeStatus();
 }
 
 function renderCurriculum() {
   const container = document.getElementById("curriculum");
-  for (let semester in curriculumData) {
+  for (const semester in curriculumData) {
     const semesterDiv = document.createElement("div");
     semesterDiv.classList.add("semester");
 
@@ -79,8 +102,9 @@ function renderCurriculum() {
     curriculumData[semester].forEach(subject => {
       const subjectDiv = document.createElement("div");
       subjectDiv.classList.add("subject");
-      subjectDiv.textContent = subject;
-      subjectDiv.onclick = () => toggleSubject(subjectDiv);
+      if (!subject.valid) subjectDiv.classList.add("non-counting");
+      subjectDiv.textContent = subject.name;
+      subjectDiv.onclick = () => toggleSubject(subjectDiv, subject.valid);
       subjectsDiv.appendChild(subjectDiv);
     });
 
@@ -92,3 +116,4 @@ function renderCurriculum() {
 
 renderCurriculum();
 updateExchangeStatus();
+
