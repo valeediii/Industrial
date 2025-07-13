@@ -40,6 +40,11 @@ h1 {
 .subject.completed {
   background: #a6f3c1;
 }
-.subject:hover {
+.subject.non-counting {
+  background: #e0e0e0;
+  color: #777;
+  cursor: not-allowed;
+}
+.subject:hover:not(.non-counting) {
   background: #b8e0fc;
 }
